@@ -32,18 +32,23 @@ def create_vector_store(pdf_files):
     return vector_store
 
 def get_conversation_chain(vector_store):
-     llm = ChatOpenAI(model_name="gpt-3.5-turbo-1106", temperature=0, openai_api_key=api_key)
-     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
-     conversation_chain = ConversationalRetrievalChain.from_llm(llm=llm, retriever=vector_store.as_retriever(), memory=memory)
-     return conversation_chain
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo-1106", temperature=0, openai_api_key=api_key)
+    memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
+    retriever = vector_store.as_retriever(search_kwargs={"k": 3}, search_type ='mmr')
+    conversation_chain = ConversationalRetrievalChain.from_llm(
+        llm=llm,
+        retriever= retriever,
+        memory=memory
+    )
+    return conversation_chain
 
 
 def get_answer(messages):
     user_question = messages[-1]["content"]
     response = conversation_chain({"question": user_question, "chat_history": messages})
-    memory = conversation_chain.memory
-    if isinstance(memory, ConversationBufferMemory):
-        memory.clear()
+    #memory = conversation_chain.memory
+    #if isinstance(memory, ConversationBufferMemory):
+     #   memory.clear()
     return response["answer"]
 
 pdf_files = [
