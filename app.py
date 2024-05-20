@@ -24,7 +24,7 @@ def create_vector_store(pdf_files):
     docs = []
     for loader in loaders:
         docs.extend(loader.load())
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=80, chunk_overlap=20)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=60, chunk_overlap=15)
     text_chunks = text_splitter.split_documents(docs)
     embeddings = OpenAIEmbeddings(openai_api_key=api_key)
     vector_store = FAISS.from_documents(text_chunks, embeddings)
@@ -46,7 +46,7 @@ def get_answer(messages):
     return response["answer"]
 
 pdf_files = [
-    "ABDULAZEEZ ADEDAYO A resume.pdf"
+    "ABDULAZEEZ ADEDAYO CV.pdf"
    ]
 vector_store = create_vector_store(pdf_files)
 conversation_chain = get_conversation_chain(vector_store)
