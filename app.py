@@ -1,4 +1,4 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
 from openai import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -25,7 +25,7 @@ def create_vector_store(pdf_files):
     docs = []
     for loader in loaders:
         docs.extend(loader.load())
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=60, chunk_overlap=15)
+    text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=15)
     text_chunks = text_splitter.split_documents(docs)
     embeddings = OpenAIEmbeddings(openai_api_key=api_key)
     vector_store = FAISS.from_documents(text_chunks, embeddings)
